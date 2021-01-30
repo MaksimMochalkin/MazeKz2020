@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using WebMaze.DbStuff.Model;
 using WebMaze.DbStuff.Model.Medicine;
 using WebMaze.Models.CustomAttribute;
+using WebMaze.Models.CustomAttribute.Medecine;
 
 namespace WebMaze.Models.HealthDepartment
 {
     public class MedicalInsuranceViewModel
     {
-        public long Id { get; set; }
 
         [Required(ErrorMessage = "Это поле обязательно для заполнения")]
-        [CheckOwnerId(ErrorMessage = "Не найден")]
+        [CheckOwnerId(ErrorMessage = "У вас уже имеется страховка")]
         public long OwnerId { get; set; }
 
         [Required(ErrorMessage = "Это поле обязательно для заполнения")]
@@ -28,6 +28,8 @@ namespace WebMaze.Models.HealthDepartment
 
         [CheckEndDate(ErrorMessage = "Необходимо установить дату больше сегодняшней")]
         public DateTime EndPeriod { get; set; }
+
+        [Required(ErrorMessage = "Это поле обязательно для заполнения")]
         public string Type { get; set; }
         public decimal Coast { get; set; }
 

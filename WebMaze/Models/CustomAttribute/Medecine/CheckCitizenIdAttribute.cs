@@ -7,30 +7,31 @@ using WebMaze.DbStuff.Repository;
 
 namespace WebMaze.Models.CustomAttribute.Medecine
 {
-    public class CheckPasswordAttribute : ValidationAttribute
+    public class CheckCitizenIdAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value != null && !(value is string))
+            if (value != null && !(value is long))
             {
-                throw new Exception("CheckPasswordAttribute must be applied only for string fields");
+                throw new Exception("CheckOwnerIdAttribute must be applied only for long fields");
             }
 
             if (value == null)
             {
-                return new ValidationResult("Поле не должно быть пустым.");
+                return new ValidationResult("Поле не может быть пустым");
             }
 
 
-            var password = (string)value;
+            var id = (long)value;
 
             var userRepo = validationContext.GetService(typeof(CitizenUserRepository))
                 as CitizenUserRepository;
-            var existingPassword = userRepo.GetUserByPassword(password);
-            if (existingPassword == null)
+            var existingId = userRepo.Get(id);
+            if (existingId == null)
             {
-                return new ValidationResult($"Не верный пароль");
+                return new ValidationResult($"Пользователь с Id номер:{id} не существует.");
             }
+            
 
             return ValidationResult.Success;
         }

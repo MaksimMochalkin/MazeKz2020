@@ -195,6 +195,9 @@ namespace WebMaze
             configurationExpression.CreateMap<ReceptionOfPatients, UserPageViewModel>();
             configurationExpression.CreateMap<UserPageViewModel, ReceptionOfPatients>();
 
+            configurationExpression.CreateMap<CitizenUser, ForDHRegistrationViewModel>();
+            configurationExpression.CreateMap<ForDHRegistrationViewModel, CitizenUser>();
+
             var mapperConfiguration = new MapperConfiguration(configurationExpression);
             var mapper = new Mapper(mapperConfiguration);
             services.AddScoped<IMapper>(s => mapper);

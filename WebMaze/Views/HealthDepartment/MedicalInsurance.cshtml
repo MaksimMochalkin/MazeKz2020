@@ -47,6 +47,7 @@
 
                                 <label class="text__form">Семейная</label>
                                 <input type="checkbox" name="Type" value="Семейная" />
+                                @Html.ValidationMessageFor(x => x.Type)
 
                                 <label for="Coast">1500$</label>
                                 <input id="Coast" type="hidden" name="Coast" value="1500" />

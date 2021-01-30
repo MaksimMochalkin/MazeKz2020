@@ -1,9 +1,9 @@
-﻿@model WebMaze.Models.HealthDepartment.ForDHLoginViewModel
+﻿@model WebMaze.Models.HealthDepartment.ForDHRegistrationViewModel
 
 <div class="form">
     <h1 class="form__header">Регистрация</h1>
 
-    <form action="@Url.Action("Registration", "Account")" method="post">
+    <form action="@Url.Action("Registration", "HealthDepartment")" method="post">
         <div class="form__input">
             <label class="text__form">Login</label>
             <div>
@@ -16,6 +16,13 @@
             <div>
                 @Html.TextBoxFor(n => n.Password, new { @type = "password" })
                 @Html.ValidationMessageFor(m => m.Password)
+            </div>
+        </div>
+        <div class="form__input">
+            <label class="text__form">Repeat Password</label>
+            <div>
+                @Html.TextBoxFor(n => n.RepeatPassword, new { @type = "password" })
+                @Html.ValidationMessageFor(m => m.RepeatPassword)
             </div>
         </div>
 

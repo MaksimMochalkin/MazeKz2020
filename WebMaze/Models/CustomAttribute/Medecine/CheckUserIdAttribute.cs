@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using WebMaze.DbStuff.Repository;
 using WebMaze.DbStuff.Repository.MedicineRepo;
 
-namespace WebMaze.Models.CustomAttribute.Medecine
+namespace WebMaze.Models.CustomAttribute
 {
-    public class CheckOwnerIdAttribute : ValidationAttribute
+    public class CheckUserIdAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
@@ -22,16 +23,16 @@ namespace WebMaze.Models.CustomAttribute.Medecine
             }
 
 
-            var id = (long)value;
+            var userId = (long)value;
 
-            var medRepo = validationContext.GetService(typeof(MedicalInsuranceRepository))
-                as MedicalInsuranceRepository;
-            var existingId = medRepo.GetOwner(id);
-            if (existingId != null)
+            var certRepo = validationContext.GetService(typeof(MedicineCertificateRepository))
+                as MedicineCertificateRepository;
+            var existingId = certRepo.GetUser(userId);
+            if(existingId != null)
             {
-                return new ValidationResult($" Пользователь с данным id: {id} уже имеет страховку.");
+                return new ValidationResult($" Пользователь с данным id:{userId} уже зарегестрирован.");
             }
-           
+
             return ValidationResult.Success;
         }
     }

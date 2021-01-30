@@ -27,7 +27,7 @@ namespace WebMaze.DbStuff.Repository
 
         public CitizenUser GetUserByPassword(string password)
         {
-            return dbSet.SingleOrDefault(x => x.Password == password);
+            return dbSet.FirstOrDefault(x => x.Password == password);
         }
 
         public IEnumerable<CitizenUser> GetFamiliarUserNames(string userName)

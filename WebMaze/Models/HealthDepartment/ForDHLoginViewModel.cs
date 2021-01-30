@@ -25,8 +25,9 @@ namespace WebMaze.Models.HealthDepartment
 
         public virtual DateTime BirthDate { get; set; }
 
+        [CheckLogin]
         public virtual string Login { get; set; }
-
+        [CheckPassword]
         public virtual string Password { get; set; }
 
         public virtual string ReturnUrl { get; set; }

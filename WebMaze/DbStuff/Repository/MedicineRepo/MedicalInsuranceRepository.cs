@@ -10,6 +10,11 @@ namespace WebMaze.DbStuff.Repository.MedicineRepo
     {
         public MedicalInsuranceRepository(WebMazeContext context) : base(context) { }
 
+        public MedicalInsurance GetOwner(long ownerId)
+        {
+            return dbSet.SingleOrDefault(x => x.OwnerId == ownerId);
+        }
+
 
     }
 }

@@ -18,7 +18,7 @@ namespace WebMaze.Models.CustomAttribute.Medecine
 
             if (value == null)
             {
-                return new ValidationResult("Value can't be null");
+                return new ValidationResult("Поле не должно быть пустым.");
             }
 
 
@@ -29,7 +29,7 @@ namespace WebMaze.Models.CustomAttribute.Medecine
             var existingLogin = userRepo.GetUserByLogin(login);
             if(existingLogin == null)
             {
-                return new ValidationResult($"Пользователь c {login} не существует.");
+                return new ValidationResult($"Пользователь {login} не существует.");
             }
 
             return ValidationResult.Success;

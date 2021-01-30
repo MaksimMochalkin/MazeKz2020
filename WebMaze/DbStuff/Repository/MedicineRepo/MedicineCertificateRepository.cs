@@ -10,5 +10,10 @@ namespace WebMaze.DbStuff.Repository.MedicineRepo
     {
         public MedicineCertificateRepository(WebMazeContext context) : base(context) { }
 
+        public MedicineCertificate GetUser(long userId)
+        {
+            return dbSet.SingleOrDefault(x => x.UserId == userId);
+        }
+
     }
 }

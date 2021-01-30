@@ -39,9 +39,14 @@ namespace WebMaze.Controllers
         [HttpPost]
         public IActionResult AddMedicineCertificate(MedicineCertificateViewModel viewModel)
         {
+            if(!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+            
             var certificate = mapper.Map<MedicineCertificate>(viewModel);
             certificateRepository.Save(certificate);
-
+                       
             return View(new MedicineCertificateViewModel());
         }
 

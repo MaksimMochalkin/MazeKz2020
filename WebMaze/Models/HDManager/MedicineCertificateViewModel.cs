@@ -21,7 +21,7 @@ namespace WebMaze.Models.HDManager
         public virtual DateTime DateExpiration { get; set; }
 
         [Required(ErrorMessage = "Это поле обязательно для заполнения")]
-        [CheckOwnerId(ErrorMessage = "Не найден")]
+        [CheckUserId]
         public virtual long UserId { get; set; }
 
         public virtual long Id { get; set; }

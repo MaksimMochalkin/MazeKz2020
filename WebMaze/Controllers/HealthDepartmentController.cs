@@ -62,6 +62,11 @@ namespace WebMaze.Controllers
         [HttpPost]
         public IActionResult RecordForm(RecordFormViewModel viewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
             var citizen = citizenRepository.Get(viewModel.CitizenId);
             var recordForm = mapper.Map<RecordForm>(viewModel);
             recordForm.Citizen = citizen;
@@ -149,19 +154,21 @@ namespace WebMaze.Controllers
         [HttpGet]
         public IActionResult Registration()
         {
-            return View(new ForDHLoginViewModel());
+            return View(new ForDHRegistrationViewModel());
         }
 
         [HttpPost]
-        public IActionResult Registration(ForDHLoginViewModel loginView)
+        public IActionResult Registration(ForDHRegistrationViewModel registrView)
         {
             if (!ModelState.IsValid)
             {
-                return View(loginView);
-
+                return View(registrView);
             }
 
-            return RedirectToAction("HealthDepartment");
+            var user = mapper.Map<CitizenUser>(registrView);
+            userService.Save(user);
+
+            return RedirectToAction("Login");
         }
 
         [HttpGet]
@@ -182,18 +189,7 @@ namespace WebMaze.Controllers
                 return View(loginView);
             }
 
-            //var recordId = new Claim("Id", user.Id.ToString());
-            //var recordName = new Claim(ClaimTypes.Name, user.Login);
-            //var recordAuthMetod = new Claim(ClaimTypes.AuthenticationMethod, Startup.MedicineAuth);
-
-            //var page = new List<Claim>() { recordId, recordName, recordAuthMetod };
-
-            //var claimsIdentity = new ClaimsIdentity(page, Startup.MedicineAuth);
-
-            //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-            //await HttpContext.SignInAsync(claimsPrincipal);
-
+            
             await userService.SignInAsync(loginView.Login, loginView.Password, isPersistent: false);
 
             if (string.IsNullOrEmpty(loginView.ReturnUrl))
@@ -302,6 +298,10 @@ namespace WebMaze.Controllers
         [HttpPost]
         public IActionResult ReceptionPatient(ReceptionOfPatientsViewModel viewModel)
         {
+            if(!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
             var citizen = citizenRepository.Get(viewModel.EnrolledCitizenId);
             var reception = mapper.Map<ReceptionOfPatients>(viewModel);
             reception.EnrolledCitizen = citizen;
