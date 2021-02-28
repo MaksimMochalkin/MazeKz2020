@@ -211,42 +211,7 @@ namespace WebMaze.Controllers
             return RedirectToAction("HealthDepartment", "HealthDepartment");
         }
 
-        [HttpGet]
-        public IActionResult MyCitizenTest()
-        {
-            var viewModel = new ForDHLoginViewModel()
-            {
-                FirstName = "Ivan",
-                LastName = "Ivanov",
-                Gender = "Male",
-                Email = "Ivan@mail.com",
-                PhoneNumber = "87778888888",
-                IsDead = false,
-                Marriage = true,
-                HaveChildren = true,
-                Balance = 1000000000,
-                BirthDate = DateTime.Now,
-                Login = "Vano",
-                Password = "3333"
-
-            };
-            return View(viewModel);
-        }
-
-
-        [HttpPost]
-        public IActionResult MyCitizenTest(ForDHLoginViewModel viewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(viewModel);
-            }
-
-            var user = mapper.Map<CitizenUser>(viewModel);
-            citizenRepository.Save(user);
-            return View();
-        }
-
+        
         [HttpGet]
         public IActionResult Hospital1()
         {

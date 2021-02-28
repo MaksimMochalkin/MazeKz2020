@@ -63,7 +63,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/HDManagerPage/ManagerPage">Страница менеджера</a></li>
-        <li class="breadcrumb-item" aria-current="page">Страница пользователя: @userService.GetCurrentUser().Login</li>
+        <li class="breadcrumb-item" aria-current="page">Список всех сертификатов и врачей</li>
     </ol>
 </nav>
 
@@ -71,6 +71,22 @@
     <h1> Список всех сертификатов и врачей </h1>
     <div>
         Общее количество врачей: @Model.Count
+    </div>
+    <div>
+        <form action="@Url.Action("GetAllCertificate", "HDManagerPage")" method="get">
+            <label>Фильтрация</label>
+            <div class="col-md-4">
+                <label>Занимаемой должности:</label>
+                <input type="text" name="Position" />
+            </div>
+            
+            <div class="col-md-4">
+                <label>Фильтрация по дате:</label>
+                <input type="date" name="DateOfIssue"/>
+            </div>
+            
+            <button type="submit">Отфильтровать</button>
+        </form>
     </div>
     <table class="table">
         <tr>

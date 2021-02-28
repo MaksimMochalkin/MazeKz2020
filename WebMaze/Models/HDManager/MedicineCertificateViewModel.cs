@@ -25,5 +25,6 @@ namespace WebMaze.Models.HDManager
         public virtual long UserId { get; set; }
 
         public virtual long Id { get; set; }
+
     }
 }

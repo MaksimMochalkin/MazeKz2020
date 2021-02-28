@@ -51,53 +51,34 @@ namespace WebMaze.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllCertificate()
+        public IActionResult GetAllCertificate(string position, DateTime? dateOfIssue)
         {
-            var certificate = certificateRepository.GetAll();
-            var viewModel = mapper.Map<List<MedicineCertificateViewModel>>(certificate);
 
-            return View(viewModel);
+            if (!string.IsNullOrWhiteSpace(position))
+            {
+                var byPosition = certificateRepository.GetCertificateByPosition(position);
+                var viewModel = mapper.Map<List<MedicineCertificateViewModel>>(byPosition);
+
+                return View(viewModel);
+            }
+            else if (dateOfIssue != null) 
+            {
+                var byDate = certificateRepository.GetCertificateByDate(dateOfIssue);
+                var viewModel = mapper.Map<List<MedicineCertificateViewModel>>(byDate);
+
+                return View(viewModel);
+            }
+            else
+            {
+                var certificate = certificateRepository.GetAll();
+                var viewModel = mapper.Map<List<MedicineCertificateViewModel>>(certificate);
+
+                return View(viewModel);
+            }
+
         }
 
-        public IActionResult CheckAmountEmployee()
-        {
-            //Проверка количества сотрудников и запрос новых(окончивших) из школы
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult CheckSertificateDoctor()
-        {
-            var certificate = certificateRepository.GetAll().Where(x => x.DateExpiration == DateTime.Today);
-            var viewModel = mapper.Map<List<MedicineCertificateViewModel>>(certificate);
-
-            return View(viewModel);
-
-        }
-
-        public IActionResult RedirectPatients()
-        {
-            //Перенаправление в поликлинику или морг
-            return View();
-        }
-
-        public IActionResult CreateHospital()
-        {
-            //Создание поликлиники при необходимости
-            return View();
-        }
-
-        public IActionResult CheckVaccinationCitizens()
-        {
-            //Проверка вакцинации
-            return View();
-        }
-
-        public IActionResult GrantApplication()
-        {
-            //Прием заявок на грант и одобрение или отказ
-            return View();
-        }
-
+        
+        
     }
 }

@@ -15,5 +15,16 @@ namespace WebMaze.DbStuff.Repository.MedicineRepo
             return dbSet.SingleOrDefault(x => x.UserId == userId);
         }
 
+        public List<MedicineCertificate> GetCertificateByPosition(string position)
+        {
+            return dbSet.Where(p => p.Position == position).ToList();
+        }
+
+        public List<MedicineCertificate> GetCertificateByDate(DateTime? date)
+        {
+            return dbSet.Where(d => d.DateOfIssue == date || d.DateExpiration == date).ToList();
+        }
+
+        
     }
 }
