@@ -1,0 +1,26 @@
+﻿@using WebMaze.Models.UserTasks
+@model UserTaskViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="OwnerLogin" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate"></label>
+        <input asp-for="StartDate" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Priority"></label>
+        <select asp-for="Priority" asp-items="Html.GetEnumSelectList<TaskPriority>()" class="form-control"></select>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-block">Create</button>
+    </div>
+</form>

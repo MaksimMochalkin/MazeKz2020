@@ -66,13 +66,10 @@ namespace WebMaze.Controllers
 
                 if (!operationResult.Succeeded)
                 {
-                    foreach (var error in operationResult.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error);
-                    }
+                    operationResult.Errors.ForEach(error => ModelState.AddModelError(string.Empty, error));
                 }
             }
-            
+
             return View(certificate);
         }
 
@@ -80,18 +77,17 @@ namespace WebMaze.Controllers
         [ExportModelStateErrorsToTempData]
         public async Task<IActionResult> Issue(string userLogin)
         {
-            var operationResult = await certificateService.IssueCertificate("Birth certificate", userLogin,
-                "Government", "Birth certificate", TimeSpan.FromDays(3650));
-            
+            var operationResult = await certificateService.IssueCertificate("Birth Certificate", userLogin,
+                "Government", "The certificate documents that the employee is unfit for work", TimeSpan.FromDays(3650));
+
             if (!operationResult.Succeeded)
             {
-                foreach (var error in operationResult.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
+                operationResult.Errors.ForEach(error => ModelState.AddModelError(string.Empty, error));
             }
 
-            return RedirectToAction(nameof(Index));
+            var urlReferrer = Request.Headers["Referer"].ToString();
+
+            return Redirect(urlReferrer);
         }
 
         [HttpPost]
@@ -102,13 +98,12 @@ namespace WebMaze.Controllers
 
             if (!operationResult.Succeeded)
             {
-                foreach (var error in operationResult.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
+                operationResult.Errors.ForEach(error => ModelState.AddModelError(string.Empty, error));
             }
 
-            return RedirectToAction(nameof(Index));
+            var urlReferrer = Request.Headers["Referer"].ToString();
+
+            return Redirect(urlReferrer);
         }
 
         public async Task<IActionResult> Update(long id)
@@ -127,10 +122,7 @@ namespace WebMaze.Controllers
 
                 if (!operationResult.Succeeded)
                 {
-                    foreach (var error in operationResult.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error);
-                    }
+                    operationResult.Errors.ForEach(error => ModelState.AddModelError(string.Empty, error));
                 }
             }
 
@@ -145,13 +137,12 @@ namespace WebMaze.Controllers
 
             if (!operationResult.Succeeded)
             {
-                foreach (var error in operationResult.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
+                operationResult.Errors.ForEach(error => ModelState.AddModelError(string.Empty, error));
             }
 
-            return RedirectToAction("Index");
+            var urlReferrer = Request.Headers["Referer"].ToString();
+
+            return Redirect(urlReferrer);
         }
     }
 }

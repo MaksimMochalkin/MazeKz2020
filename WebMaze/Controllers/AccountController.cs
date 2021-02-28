@@ -29,8 +29,7 @@ namespace WebMaze.Controllers
         private IMapper mapper;
         private UserService userService;
 
-        public AccountController(CitizenUserRepository citizenUserRepository,
-            IMapper mapper,
+        public AccountController(CitizenUserRepository citizenUserRepository, IMapper mapper,
             IWebHostEnvironment hostEnvironment, AdressRepository adressRepository, UserService userService)
         {
             this.citizenUserRepository = citizenUserRepository;
@@ -55,35 +54,9 @@ namespace WebMaze.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
-            /* Authentication written by Pavel:
-            var user = citizenUserRepository
-                .GetUserByNameAndPassword(loginViewModel.Login, loginViewModel.Password);
-            if (user == null)
-            {
-                return View(loginViewModel);
-            }
-
-            
-            //Строки в документе
-            var recordId = new Claim("Id", user.Id.ToString());
-            var recordName = new Claim(ClaimTypes.Name, user.Login);
-            var recordAuthMethod = new Claim(ClaimTypes.AuthenticationMethod, Startup.AuthMethod);
-
-            //Страница в документе
-            var page = new List<Claim>() { recordId, recordName, recordAuthMethod };
-
-            //Документ
-            var claimsIdentity = new ClaimsIdentity(page, Startup.AuthMethod);
-
-            //Пользователь с точки зрения .net
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-            await HttpContext.SignInAsync(claimsPrincipal);
-            */
-
             if (ModelState.IsValid)
             {
-                var operationResult = await userService.SignInAsync(loginViewModel.Login, loginViewModel.Password, isPersistent: false);
+                var operationResult = await userService.SignInAsync(loginViewModel.Login, loginViewModel.Password, loginViewModel.IsPersistent);
                 if (operationResult.Succeeded)
                 {
                     if (string.IsNullOrEmpty(loginViewModel.ReturnUrl))
@@ -107,12 +80,7 @@ namespace WebMaze.Controllers
         [AllowAnonymous]
         public IActionResult Registration()
         {
-            var viewModel = new RegistrationViewModel()
-            {
-                Login = "Test",
-                Password = "Test"
-            };
-            return View(viewModel);
+            return View(new RegistrationViewModel());
         }
 
         [HttpPost]
@@ -126,70 +94,52 @@ namespace WebMaze.Controllers
 
             var user = mapper.Map<CitizenUser>(viewModel);
             userService.Save(user);
+
             return RedirectToAction(nameof(Login));
         }
 
-        [HttpGet]
-        public IActionResult Profile()
+        public IActionResult MyProfile()
         {
             var user = userService.GetCurrentUser();
-            var viewModel = mapper.Map<ProfileViewModel>(user);
+            var viewModel = mapper.Map<MyProfileViewModel>(user);
+
             return View(viewModel);
         }
 
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
+
             return RedirectToAction("Index","Home");
         }
 
         [HttpPost]
-        public IActionResult Profile(ProfileViewModel profileViewModel)
+        public async Task<IActionResult> UpdateAvatar(IFormFile avatar)
         {
-            var citizen = mapper.Map<CitizenUser>(profileViewModel);
-            citizenUserRepository.Save(citizen);
-            return View(profileViewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateAvatar(ProfileViewModel viewModel)
-        {
-            var fileName = viewModel.Avatar.FileName;
+            var user = userService.GetCurrentUser();
+            var fileName = user.Login;
             var wwwrootPath = hostEnvironment.WebRootPath;
-            var path = @$"{wwwrootPath}\image\avatar\{fileName}";
+            var path = @$"{wwwrootPath}\image\avatar\{fileName}.jpg";
             using (var fileStream = new FileStream(path, FileMode.Create))
             {
-                await viewModel.Avatar.CopyToAsync(fileStream);
+                await avatar.CopyToAsync(fileStream);
             }
 
-            var citizen = citizenUserRepository.Get(viewModel.Id);
-            citizen.AvatarUrl = $"/image/avatar/{fileName}";
-            citizenUserRepository.Save(citizen);
+            user.AvatarUrl = $"/image/avatar/{fileName}.jpg";
+            userService.Save(user);
 
-            return RedirectToAction("Profile", new { id = viewModel.Id });
-        }
-    
-        [HttpGet]
-        public IActionResult AddAdress(long userId)
-        {
-            var viewModel = new AdressViewModel()
-            {
-                OwnerId = userId
-            };
-            return View(viewModel);
+            return RedirectToAction("MyProfile");
         }
 
         [HttpPost]
-        public IActionResult AddAdress(AdressViewModel adressViewModel)
+        public IActionResult SaveAddress(AdressViewModel addressViewModel)
         {
-            var adress = mapper.Map<Adress>(adressViewModel);
-            var user = citizenUserRepository.Get(adressViewModel.OwnerId);
+            var address = mapper.Map<Adress>(addressViewModel);
+            var user = userService.FindByLogin(addressViewModel.OwnerLogin);
+            address.Owner = user;
+            adressRepository.Save(address);
 
-            adress.Owner = user;
-
-            adressRepository.Save(adress);
-
-            return RedirectToAction("Profile", new { id = adressViewModel.OwnerId });
+            return RedirectToAction("MyProfile");
         }
     }
 }

@@ -18,10 +18,6 @@ namespace WebMaze.DbStuff
 
         public DbSet<Violation> Violations { get; set; }
 
-        public DbSet<PoliceCertificate> PoliceCertificates { get; set; }
-
-        public DbSet<ViolationDeclaration> ViolationDeclarations { get; set; }
-
         public DbSet<HealthDepartment> HealthDepartment { get; set; }
         public DbSet<RecordForm> RecordForms { get; set; }
 
@@ -37,9 +33,15 @@ namespace WebMaze.DbStuff
 
         public DbSet<BusRouteTime> BusRouteTime { get; set; }
 
-        public DbSet<UserTask> UserTasks { get; set; }
+        public DbSet<UserTask> Tasks { get; set; }
 
         public DbSet<Certificate> Certificates { get; set; }
+
+        public DbSet<Transaction> Transactions { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
+
+        public DbSet<Friendship> Friendships { get; set; }
 
         public DbSet<MedicalInsurance> MedicalInsurances { get; set; }
         public DbSet<MedicineCertificate> MedicineCertificates { get; set; }
@@ -61,8 +63,8 @@ namespace WebMaze.DbStuff
 
             modelBuilder
                 .Entity<CitizenUser>()
-                .HasMany(p => p.Roles)
-                .WithMany(p => p.Users)
+                .HasMany(citizenUser => citizenUser.Roles)
+                .WithMany(role => role.Users)
                 .UsingEntity(j => j.ToTable("CitizenUserRoles"));
 
             modelBuilder.Entity<CitizenUser>()
@@ -81,10 +83,41 @@ namespace WebMaze.DbStuff
                 .HasMany(x => x.DoctorsAppointments)
                 .WithOne(x => x.EnrolledCitizen);
 
-            
             modelBuilder.Entity<CitizenUser>()
-                .HasMany(citizen => citizen.Certificates)
+                .HasMany(citizenUser => citizenUser.Tasks)
+                .WithOne(userTask => userTask.Owner);
+
+            modelBuilder.Entity<CitizenUser>()
+                .HasMany(citizenUser => citizenUser.Certificates)
                 .WithOne(certificate => certificate.Owner);
+
+            modelBuilder.Entity<CitizenUser>()
+                .HasMany(citizenUser => citizenUser.SentTransactions)
+                .WithOne(transaction => transaction.Sender);
+
+            modelBuilder.Entity<CitizenUser>()
+                .HasMany(citizenUser => citizenUser.ReceivedTransactions)
+                .WithOne(transaction => transaction.Recipient);
+
+            modelBuilder.Entity<CitizenUser>()
+                .HasMany(citizenUser => citizenUser.SentMessages)
+                .WithOne(message => message.Sender)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CitizenUser>()
+                .HasMany(citizenUser => citizenUser.ReceivedMessages)
+                .WithOne(message => message.Recipient)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CitizenUser>()
+                .HasMany(citizenUser => citizenUser.SentFriendRequests)
+                .WithOne(friendship => friendship.Requester)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CitizenUser>()
+                .HasMany(citizenUser => citizenUser.ReceivedFriendRequests)
+                .WithOne(friendship => friendship.Requested)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

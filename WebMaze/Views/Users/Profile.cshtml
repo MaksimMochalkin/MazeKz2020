@@ -1,0 +1,129 @@
+﻿@using WebMaze.Models.Friends
+@model WebMaze.Models.Users.ProfileViewModel
+
+@{
+    Layout = "_LayoutUserAccount";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="card text-center mb-3">
+                <div class="card-body">
+                    <img src="@Model.AvatarUrl" class="img-fluid" alt="Profile picture">
+                    <partial name="_FriendshipActionPartial" model="new FoundUserViewModel {Login = Model.Login, Friendship = Model.Friendship}" />
+                </div>
+            </div>
+            <div class="card text-center mb-3">
+                <div class="card-body">
+                    <strong>Friends:</strong>
+                    <div class="d-flex flex-wrap align-items-center">
+                        @foreach (var friend in Model.Friends)
+                        {
+                            <div class="col-sm-4 p-2">
+                                <div class="mb-2">
+                                    <a class="mb-2" asp-controller="Users" asp-action="Profile" asp-route-userLogin="@friend.Login"><strong>@friend.FirstName</strong></a>
+                                </div>
+                                <img src="@friend.AvatarUrl" class="rounded-circle mx-auto d-block" height="75" width="75" alt="Profile picture">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card text-left mb-3">
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row no-gutters">
+                                    <h2>@Model.FirstName @Model.LastName</h2>
+                                </div>
+                                <hr />
+                                <div class="row no-gutters">
+                                    <div class="col">
+                                        <p>Birth date: @Model.BirthDate.ToString("d")</p>
+                                        <p>Gender: @Model.Gender</p>
+                                        <p>Marital status: @(Model.IsMarried ? "Married" : "Single") </p>
+                                    </div>
+                                    <div class="col">
+                                        <p>Registration date: @Model.RegistrationDate.ToString("d")</p>
+                                        <p>Email: @Model.Email</p>
+                                        <p>Phone number: @Model.PhoneNumber</p>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row no-gutters">
+                                    <strong>Addresses:</strong>
+                                    @foreach (var adresses in Model.Adresses)
+                                    {
+                                        <div>
+                                            City: @adresses.City Street: @adresses.Street House number: @adresses.HouseNumber
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card text-left mb-3">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <strong>@Model.Login's certificates:</strong>
+                            </div>
+                            <div class="d-flex flex-wrap">
+                                @foreach (var certificate in Model.Certificates)
+                                {
+                                    <div id="certificate-detail-@certificate.Id" onclick="popupSection(this.id)" class="cursor-pointer col-4 p-2 pb-0">
+                                        <img src="/image/certificates/default_certificate.jpg" class="img-fluid" alt="Certificate image">
+                                        <div class="mt-2 text-center">
+                                            @certificate.Name
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            @foreach (var certificate in Model.Certificates)
+                            {
+                                <div id="popup-section-@certificate.Id" class="container border border-info p-3 px-3 mb-3" style="display: none;">
+                                    <div class="text-center">
+                                        <strong>@certificate.Name</strong>
+                                    </div>
+                                    <hr class="m-2" />
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            Description: @certificate.Description
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label asp-for="@certificate.IssuedBy"></label>: @certificate.IssuedBy
+                                        </div>
+                                        <div class="col-6">
+                                            Status: @certificate.Status
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label asp-for="@certificate.IssueDate"></label>: @certificate.IssueDate.ToString("d")
+                                        </div>
+                                        <div class="col-6">
+                                            <label asp-for="@certificate.ExpiryDate"></label>: @certificate.ExpiryDate.ToString("d")
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function popupSection(certificateIdStr) {
+        var certificateId = certificateIdStr.replace(/certificate-detail-/, '');
+        $(`#popup-section-${certificateId}`).slideToggle(500);
+    }
+</script>

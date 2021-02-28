@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebMaze</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/UserAccount.css?t=@DateTime.Now.Ticks" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/js/user-account-layout.js"></script>
+    @RenderSection("Scripts", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Smart city</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="mr-auto">
+                            <a asp-action="Index" asp-controller="Home" class="nav-link text-dark">Home</a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li>
+                                <vc:balance-summary />
+                            </li>
+                            <li>
+                                <a asp-action="MyProfile" asp-controller="Account" class="nav-link text-dark">Profile @User.Identity.Name</a>
+                            </li>
+                            <li>
+                                <a asp-action="Logout" asp-controller="Account" class="nav-link text-dark">Log out</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a asp-action="Registration" asp-controller="Account" class="nav-link text-dark">Registration</a>
+                            </li>
+                            <li>
+                                <a asp-action="Login" asp-controller="Account" class="nav-link text-dark">Log in</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="wrapper">
+        <nav class="sidebar mr-3">
+            <nav class="nav nav-pills flex-column">
+                <a asp-controller="Account" asp-action="MyProfile" class="nav-link border rounded-0">My profile</a>
+                <a asp-action="Index" asp-controller="Messenger" class="nav-link border rounded-0">Messenger</a>
+                <a asp-action="Index" asp-controller="Friends" class="nav-link border rounded-0">Friends</a>
+                <div class="nav-link border pr-2 rounded-0 d-flex justify-content-between">
+                    <a asp-action="Tasks" asp-controller="UserTasks" asp-route-relativeDateString="Today">Tasks</a>
+                    <a aria-controls="tasksCollapse" aria-expanded="true" class="dropdown-toggle" data-toggle="collapse" href="#tasksCollapse"></a>
+                </div>
+                <div class="nav-link border rounded-0 bg-light p-0 p-0 pl-4 pb-2 collapse" id="tasksCollapse">
+                    <div>
+                        <a asp-action="Tasks" asp-controller="UserTasks" asp-route-relativeDateString="Today">Today</a>
+                    </div>
+                    <div>
+                        <a asp-action="Tasks" asp-controller="UserTasks" asp-route-relativeDateString="Tomorrow">Tomorrow</a>
+                    </div>
+                    <div>
+                        <a asp-action="Tasks" asp-controller="UserTasks" asp-route-relativeDateString="NextSevenDays">Next 7 days</a>
+                    </div>
+                    <div>
+                        <a asp-action="Tasks" asp-controller="UserTasks" asp-route-relativeDateString="Upcoming">Upcoming</a>
+                    </div>
+                    <div>
+                        <a asp-action="Tasks" asp-controller="UserTasks" asp-route-relativeDateString="Completed">Completed</a>
+                    </div>
+                </div>
+                <a asp-action="Index" asp-controller="Transactions" class="nav-link border rounded-0">Transactions</a>
+            </nav>
+        </nav>
+
+        <div class="container">
+            <main role="main" class="row justify-content-center pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+</body>
+</html>

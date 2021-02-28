@@ -31,47 +31,48 @@ namespace WebMaze.Services
         {
             var idStr = httpContextAccessor.HttpContext.
                 User.Claims.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            
             if (string.IsNullOrEmpty(idStr))
             {
                 return null;
             }
 
             var id = int.Parse(idStr);
-            var citizen = citizenUserRepository.Get(id);
-            return citizen;
+            var user = citizenUserRepository.Get(id);
+            return user;
         }
 
-        public virtual List<CitizenUser> GetUsers()
+        public List<CitizenUser> GetUsers()
         {
             return citizenUserRepository.GetAll();
         }
 
-        public virtual CitizenUser FindById(long id)
+        public CitizenUser FindById(long id)
         {
             return citizenUserRepository.Get(id);
         }
 
-        public virtual CitizenUser FindByLogin(string login)
+        public CitizenUser FindByLogin(string login)
         {
             return citizenUserRepository.GetUserByLogin(login);
         }
 
-        public virtual void Save(CitizenUser user)
+        public bool UserExists(string login)
+        {
+            return citizenUserRepository.UserExists(login);
+        }
+
+        public void Save(CitizenUser user)
         {
             citizenUserRepository.Save(user);
         }
 
-        public virtual void Delete(CitizenUser user)
+        public void Delete(CitizenUser user)
         {
             citizenUserRepository.Delete(user.Id);
         }
 
-        public virtual void ChangePassword(CitizenUser user, string oldPassword, string newPassword)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual async Task<OperationResult> SignInAsync(string userName, string password, bool isPersistent)
+        public async Task<OperationResult> SignInAsync(string userName, string password, bool isPersistent)
         {
             var user = citizenUserRepository.GetUserByNameAndPassword(userName, password);
 
@@ -98,12 +99,17 @@ namespace WebMaze.Services
             return OperationResult.Success();
         }
 
-        public virtual bool IsInRole(CitizenUser user, string roleName)
+        public CitizenUser GetUserByLogin(string userLogin)
+        {
+            return citizenUserRepository.GetUserByLogin(userLogin);
+        }
+
+        public bool IsInRole(CitizenUser user, string roleName)
         {
             return user.Roles.Any() && user.Roles.All(useRole => useRole.Name == roleName);
         }
 
-        public virtual OperationResult AddToRole(CitizenUser user, string roleName)
+        public OperationResult AddToRole(CitizenUser user, string roleName)
         {
             if (user == null)
             {
@@ -127,7 +133,7 @@ namespace WebMaze.Services
             return OperationResult.Success();
         }
 
-        public virtual OperationResult RemoveFromRole(CitizenUser user, string roleName)
+        public OperationResult RemoveFromRole(CitizenUser user, string roleName)
         {
             if (user == null)
             {
@@ -149,6 +155,27 @@ namespace WebMaze.Services
             user.Roles.Remove(role);
             citizenUserRepository.Save(user);
             return OperationResult.Success();
+        }
+
+        public List<CitizenUser> GetBlockedUsers()
+        {
+            return citizenUserRepository.GetBlockedUsers().ToList();
+        }
+
+        public List<CitizenUser> SearchUsers(string searchTerm)
+        {
+            var usersAsQueryable = citizenUserRepository.GetUsersAsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                usersAsQueryable = usersAsQueryable.Where(user =>
+                        user.FirstName.ToLower().Contains(searchTerm.ToLower()) ||
+                        user.LastName.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            var foundUsers = usersAsQueryable.Take(10).OrderBy(user => user.FirstName).ToList();
+
+            return foundUsers;
         }
     }
 }

@@ -1,37 +1,35 @@
 ﻿@using WebMaze.Models.UserTasks
 @model UserTaskViewModel
 
-<div class="w-25">
-    <h2>Create Task</h2>
-    <form action="@Url.Action("Edit", "UserTasks")" method="post">
-        @Html.HiddenFor(task => task.Id)
-        <div class="form-group">
-            @Html.DisplayNameFor(task => task.Name):
-            @Html.TextBoxFor(task => task.Name, htmlAttributes: new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            @Html.DisplayNameFor(task => task.Description):
-            @Html.TextBoxFor(task => task.Description, htmlAttributes: new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            Start date:
-            <div>
-                @Html.EditorFor(task => task.StartDate)
-            </div>
-        </div>
-        <div class="form-group">
-            End Date:
-            <div>
-                @Html.EditorFor(task => task.EndDate)
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.DisplayNameFor(task => task.Priority):
-            @Html.DropDownList("Priority", new SelectList(Enum.GetValues(typeof(WebMaze.DbStuff.Model.UserTask.TaskPriority))), "Select Priority", new { @class = "form-control" })
-        </div>
-        <div class="text-center">
-            <button class="btn btn-primary" type="submit">Save</button>
-            <a href="@Url.Action("Index", "UserTasks")" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
-</div>
+<h2>Plan a task</h2>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate"></label>
+        <input asp-for="StartDate" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate"></label>
+        <input asp-for="EndDate" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Priority"></label>
+        <select asp-for="Priority" asp-items="Html.GetEnumSelectList<TaskPriority>()">123</select>
+    </div>
+    <div class="form-group">
+        <label asp-for="OwnerLogin"></label>
+        <input asp-for="OwnerLogin" class="form-control" />
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-sm btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

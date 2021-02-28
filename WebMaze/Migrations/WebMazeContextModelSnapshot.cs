@@ -19,21 +19,6 @@ namespace WebMaze.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
-            modelBuilder.Entity("CitizenUserPoliceCertificate", b =>
-                {
-                    b.Property<long>("PoliceCertificatesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("PoliceCertificatesId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CitizenUserPoliceCertificate");
-                });
-
             modelBuilder.Entity("CitizenUserRole", b =>
                 {
                     b.Property<long>("RolesId")
@@ -209,7 +194,7 @@ namespace WebMaze.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("money");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
@@ -220,16 +205,19 @@ namespace WebMaze.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("HaveChildren")
+                    b.Property<bool>("HasChildren")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDead")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMarried")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("LastLoginDate")
@@ -239,12 +227,11 @@ namespace WebMaze.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Login")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Marriage")
-                        .HasColumnType("bit");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -254,6 +241,9 @@ namespace WebMaze.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Login")
+                        .IsUnique();
 
                     b.ToTable("CitizenUser");
                 });
@@ -397,27 +387,6 @@ namespace WebMaze.Migrations
                     b.ToTable("RecordForms");
                 });
 
-            modelBuilder.Entity("WebMaze.DbStuff.Model.Police.PoliceCertificate", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .UseIdentityColumn();
-
-                    b.Property<DateTime>("DateOfIssue")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Speciality")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Validity")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PoliceCertificates");
-                });
-
             modelBuilder.Entity("WebMaze.DbStuff.Model.Police.Policeman", b =>
                 {
                     b.Property<long>("Id")
@@ -425,8 +394,8 @@ namespace WebMaze.Migrations
                         .HasColumnType("bigint")
                         .UseIdentityColumn();
 
-                    b.Property<string>("Rank")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Rank")
+                        .HasColumnType("int");
 
                     b.Property<long?>("UserId")
                         .HasColumnType("bigint");
@@ -445,45 +414,14 @@ namespace WebMaze.Migrations
                         .HasColumnType("bigint")
                         .UseIdentityColumn();
 
-                    b.Property<string>("Article")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("BlamingPolicemanId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("Penalty")
-                        .HasColumnType("money");
-
-                    b.Property<string>("Punishment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TermOfPunishment")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlamingPolicemanId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Violations");
-                });
-
-            modelBuilder.Entity("WebMaze.DbStuff.Model.Police.ViolationDeclaration", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .UseIdentityColumn();
-
                     b.Property<long?>("BlamedUserId")
                         .HasColumnType("bigint");
+
+                    b.Property<long?>("BlamingUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ConfirmDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -491,29 +429,33 @@ namespace WebMaze.Migrations
                     b.Property<string>("Explanation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OffenseType")
-                        .IsRequired()
+                    b.Property<int>("OffenseType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Penalty")
+                        .HasColumnType("money");
+
+                    b.Property<string>("PolicemanCommentary")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime?>("TermOfPunishment")
+                        .HasColumnType("datetime2");
 
-                    b.Property<long?>("ViewedPolicemanId")
+                    b.Property<long?>("ViewingPolicemanId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BlamedUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("BlamingUserId");
 
-                    b.HasIndex("ViewedPolicemanId");
+                    b.HasIndex("ViewingPolicemanId");
 
-                    b.ToTable("ViolationDeclarations");
+                    b.ToTable("Violations");
                 });
 
             modelBuilder.Entity("WebMaze.DbStuff.Model.Role", b =>
@@ -569,7 +511,104 @@ namespace WebMaze.Migrations
                     b.ToTable("Certificates");
                 });
 
-            modelBuilder.Entity("WebMaze.DbStuff.Model.UserTask", b =>
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.Friendship", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime?>("AcceptanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FriendshipStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RequestedId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RequesterId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestedId");
+
+                    b.HasIndex("RequesterId");
+
+                    b.ToTable("Friendships");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.Message", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RecipientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SenderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.Transaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("money");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("RecipientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SenderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.UserTask", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -583,7 +622,11 @@ namespace WebMaze.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("OwnerId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -596,22 +639,9 @@ namespace WebMaze.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserTasks");
-                });
+                    b.HasIndex("OwnerId");
 
-            modelBuilder.Entity("CitizenUserPoliceCertificate", b =>
-                {
-                    b.HasOne("WebMaze.DbStuff.Model.Police.PoliceCertificate", null)
-                        .WithMany()
-                        .HasForeignKey("PoliceCertificatesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("CitizenUserRole", b =>
@@ -704,44 +734,91 @@ namespace WebMaze.Migrations
 
             modelBuilder.Entity("WebMaze.DbStuff.Model.Police.Violation", b =>
                 {
-                    b.HasOne("WebMaze.DbStuff.Model.Police.Policeman", "BlamingPoliceman")
-                        .WithMany()
-                        .HasForeignKey("BlamingPolicemanId");
-
-                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("BlamingPoliceman");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebMaze.DbStuff.Model.Police.ViolationDeclaration", b =>
-                {
                     b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "BlamedUser")
                         .WithMany()
                         .HasForeignKey("BlamedUserId");
 
-                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "User")
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "BlamingUser")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("BlamingUserId");
 
-                    b.HasOne("WebMaze.DbStuff.Model.Police.Policeman", "ViewedPoliceman")
-                        .WithMany()
-                        .HasForeignKey("ViewedPolicemanId");
+                    b.HasOne("WebMaze.DbStuff.Model.Police.Policeman", "ViewingPoliceman")
+                        .WithMany("Violations")
+                        .HasForeignKey("ViewingPolicemanId");
 
                     b.Navigation("BlamedUser");
 
-                    b.Navigation("User");
+                    b.Navigation("BlamingUser");
 
-                    b.Navigation("ViewedPoliceman");
+                    b.Navigation("ViewingPoliceman");
                 });
 
             modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.Certificate", b =>
                 {
                     b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Owner")
                         .WithMany("Certificates")
+                        .HasForeignKey("OwnerId");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.Friendship", b =>
+                {
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Requested")
+                        .WithMany("ReceivedFriendRequests")
+                        .HasForeignKey("RequestedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Requester")
+                        .WithMany("SentFriendRequests")
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Requested");
+
+                    b.Navigation("Requester");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.Message", b =>
+                {
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Recipient")
+                        .WithMany("ReceivedMessages")
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Sender")
+                        .WithMany("SentMessages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.Transaction", b =>
+                {
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Recipient")
+                        .WithMany("ReceivedTransactions")
+                        .HasForeignKey("RecipientId");
+
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Sender")
+                        .WithMany("SentTransactions")
+                        .HasForeignKey("SenderId");
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.UserAccount.UserTask", b =>
+                {
+                    b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Owner")
+                        .WithMany("Tasks")
                         .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
@@ -761,15 +838,34 @@ namespace WebMaze.Migrations
                 {
                     b.Navigation("Adresses");
 
-                    b.Navigation("DoctorsAppointments");
-
                     b.Navigation("Certificates");
+
+                    b.Navigation("DoctorsAppointments");
 
                     b.Navigation("MedicalInsurance");
 
                     b.Navigation("MedicineCertificate");
 
+                    b.Navigation("ReceivedFriendRequests");
+
+                    b.Navigation("ReceivedMessages");
+
+                    b.Navigation("ReceivedTransactions");
+
                     b.Navigation("RecordForms");
+
+                    b.Navigation("SentFriendRequests");
+
+                    b.Navigation("SentMessages");
+
+                    b.Navigation("SentTransactions");
+
+                    b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("WebMaze.DbStuff.Model.Police.Policeman", b =>
+                {
+                    b.Navigation("Violations");
                 });
 #pragma warning restore 612, 618
         }
